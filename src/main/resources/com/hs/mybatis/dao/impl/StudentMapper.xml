@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hs.mybatis.dao.StudentMapper">
+
+   <resultMap type="com.hs.mybatis.entry.Student" id="baseResultMap">
+      <id column="sid" property="sid"/>
+      <result column="sname" property="sname"/>
+      <result column="gender" property="gender"/>
+      
+      <collection property="courses" ofType="com.hs.mybatis.entry.Course">
+         <id column="cid" property="cid"/>
+         <result column="cname" property="cname"/>
+         <result column="teacher_id" property="teacherId"/>
+         
+         <association property="teacher" javaType="com.hs.mybatis.entry.Teacher">
+             <id column="ID" property="id"/>
+             <result column="teacher_name" property="name"/>
+         </association>
+         
+      </collection>
+      
+   </resultMap>
+   
+   <resultMap type="com.hs.mybatis.entry.Student" id="baseLazyingLoadingResultMap">
+      <id column="sid" property="sid"/>
+      <result column="sname" property="sname"/>
+      <result column="gender" property="gender"/>
+      
+      <collection property="courses" ofType="com.hs.mybatis.entry.Course">
+         <id column="cid" property="cid"/>
+         <result column="cname" property="cname"/>
+         <result column="teacher_id" property="teacherId"/>
+         
+         <association property="teacher" javaType="com.hs.mybatis.entry.Teacher">
+             <id column="ID" property="id"/>
+             <result column="teacher_name" property="name"/>
+         </association>
+         
+      </collection>
+      
+   </resultMap>
+
+
+	<select id="selectStudentAndCourse" resultMap="baseResultMap">
+	    SELECT 
+		student.*,course.*,teacher.`NAME` AS teacher_name
+		FROM student
+		LEFT JOIN student_course ON student.`sid` = student_course.`student_id`
+		INNER JOIN course ON student_course.`course_id` = course.`cid`
+		INNER JOIN teacher ON course.`teacher_id` = teacher.`ID`
+		
+	</select>
+	
+	<select id="selectStudentAndCourseWithLazyingLoading" resultMap="baseLazyingLoadingResultMap">
+	    SELECT 
+		student.*,course.*,teacher.`NAME` AS teacher_name
+		FROM student
+		LEFT JOIN student_course ON student.`sid` = student_course.`student_id`
+		INNER JOIN course ON student_course.`course_id` = course.`cid`
+		INNER JOIN teacher ON course.`teacher_id` = teacher.`ID`
+		
+	</select>
+</mapper>
